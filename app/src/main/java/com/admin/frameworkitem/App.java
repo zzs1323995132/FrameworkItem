@@ -6,7 +6,7 @@ import com.admin.frameworkitem.multipackage.EnvType;
 
 public class App extends Application {
     //多环境打包路径
-    //多环境打包标志  1：开发环境 2：测试环境3：生产环境
+    //多环境打包标志  1 ：开发环境 2：测试环境3：生产环境
     public static int envType = BuildConfig.ENV_TYPE;
     public static String envTypeName = "";
 
