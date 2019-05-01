@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.admin.frameworkitem"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "versionCode"//多环境打包设置
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    //*******************打包设置开始
+    // 定义生成的apk的名称
+    def apkName;
+    signingConfigs {
+        release {
+            storeFile file('framwork.jks')
+            storePassword '123456'
+            keyAlias 'framwork'
+            keyPassword '123456'
+        }
+    }
+    // 修改apk build的名字
+    buildTypes {
+        debug {
+            minifyEnabled false
+            apkName = "framework.apk"
+            signingConfig signingConfigs.release
+        }
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            apkName = "framework.apk"
+            signingConfig signingConfigs.release
+        }
+
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (outputFileName.endsWith('.apk')) {
+                //这里使用之前定义apk文件名称
+                outputFileName = apkName
+            }
+        }
+
+    }
+    //*******************打包设置结束
+    //*******************多环境打包设置开始
+    productFlavors {
+        //开发环境
+        develop {
+            buildConfigField "int", "ENV_TYPE", "1"
+            applicationId 'com.admin.versiondemo'
+            manifestPlaceholders = [
+                    app_name: "开发环境",
+                    app_icon: "@drawable/icon_develop"
+            ]
+        }
+        //测试环境
+        check {
+            buildConfigField "int", "ENV_TYPE", "2"
+            applicationId 'com.admin.versiondemo'
+            manifestPlaceholders = [
+                    app_name: "测试环境",
+                    app_icon: "@drawable/icon_check"
+            ]
+        }
+        //生产环境
+        product {
+            buildConfigField "int", "ENV_TYPE", "3"
+            applicationId 'com.admin.versiondemo'
+            manifestPlaceholders = [
+                    app_name: "生产环境",
+                    app_icon: "@drawable/icon_product"
+            ]
+        }
+    }
+
+    //*******************多环境打包设置结束
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
